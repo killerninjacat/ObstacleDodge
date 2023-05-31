@@ -35,7 +35,7 @@ public class CanvasMain extends View {
     private Bitmap runner,chaser, runnerhit,runner1,runner2,runner3,runner4,runner5,runner6,runner7,egg;
     boolean jump,jump1,gover=false,strtgme=false,pu=false;
     private int g=0;
-    float ob_speed_constant,refrate,obvertical;
+    float refrate,obvertical;
     int go1=0,score=0,obstacle1=0,obcount=0,getrun,obgap,putime=200,puelapsed,dircheck=-1;
     private long t1 = 0;
     float vely,vely1=-67,vely3,grav=3;
@@ -119,7 +119,7 @@ public class CanvasMain extends View {
         scorefont = ResourcesCompat.getFont(context, R.font.bangers);
         textpaint=new Paint();
         textpaint.setColor(Color.BLACK);
-        textpaint.setTextSize(120);
+        textpaint.setTextSize(100);
         textpaint.setTypeface(scorefont);
         runner = BitmapFactory.decodeResource(getResources(), R.drawable.runner);
         runner1 = BitmapFactory.decodeResource(getResources(), R.drawable.runner1);
@@ -156,9 +156,6 @@ public class CanvasMain extends View {
             super.onDraw(canvas);
         int base = getHeight() - 100;
         vibr=(Vibrator)getContext().getSystemService(getContext().VIBRATOR_SERVICE);
-            long ctime = System.currentTimeMillis();
-            long rantime = ctime - t1;
-            t1 = ctime;
             Random random=new Random();
             refrate=getRefreshRate(getContext());
 
@@ -185,17 +182,16 @@ public class CanvasMain extends View {
                 obgap = 1750+10*random.nextInt(5);
             }
         }
-            else if(refrate>80)
+            if(refrate>80)
             {
                 vely1=-55;
-                grav=1.8f;
+                grav=1.7f;
                 obvertical=3.3f;
                 if(obcount>=30)
                     obvertical=7.33f;
                 else if(obcount>=40)
                     obvertical=11.33f;
                 if(obcount<7) {
-                    vely1=-56;
                     ob_speed = 14;
                     obgap = 1250 + 10*random.nextInt(5);
                 }
@@ -242,23 +238,22 @@ public class CanvasMain extends View {
                     canvas.drawBitmap(bi,eggpos,getHeight()-300,null);
                     eggpos-=ob_speed;
                 }*/
-            ob_speed_constant = (ob_speed * rantime*60) / 1000.0f;
-            canvas.drawText("SCORE: "+score,getWidth()-550,190,textpaint);
+            canvas.drawText("SCORE: "+score,getWidth()-500,180,textpaint);
         canvas.drawBitmap(runner,cx, cy, null);
         canvas.drawBitmap(chaser,cx1,cy1,null);
         for (int i1=0;i1<obs.size();i1++) {
             RectF ob1=obs.get(i1);
             ob1.offset(-ob_speed, 0);
             if(obcount>=20)
-                if(ob1.height()==200)
+                if(ob1.height()!=400)
                 ob1.offset(0,-obvertical*veldir.get(i1));
             if(ob1.top<=0||ob1.bottom>=getHeight()-150) {
                     veldir.set(i1,veldir.get(i1) * -1);
             }
-            if(ob1.height()==200)
-            canvas.drawRect(ob1, ob_p);
+            if(ob1.height()==400)
+            canvas.drawRect(ob1, ob_p2);
             else
-                canvas.drawRect(ob1,ob_p2);
+                canvas.drawRect(ob1,ob_p);
             if (!obscomp.contains(ob1)&&!gover && RectF.intersects(ob1, cirtorect())) {
                 if (ob1.height() == 400.0 || g >= 1) {
                     gover = true;Log.d("gameovercall", "gameovercall ");
@@ -267,7 +262,7 @@ public class CanvasMain extends View {
 
                     gameover();
 
-                } else if (ob1.height() == 200.0) {
+                } else {
                     h01.start();
                     ob_speed-=3;
                     g++;
@@ -331,7 +326,7 @@ public class CanvasMain extends View {
         Random random=new Random();
         int obh=random.nextBoolean()?ob1_h:ob2_h;
         int oby=he-obh-150;
-        if(obcount>=20&&obh==200) {
+        if(obcount>=20&&obh!=400) {
             oby = oby - 180*random.nextInt(5);
             Log.d("initial", "oby: "+oby);
         }
