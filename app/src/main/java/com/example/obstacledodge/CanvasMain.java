@@ -378,6 +378,8 @@ public class CanvasMain extends View {
     }
     private void jumpball()
     {
+        final MediaPlayer jumpsound=MediaPlayer.create(getContext(), R.raw.jump);
+        jumpsound.start();
         vely=vely1 ;
         jump=true;
     }
