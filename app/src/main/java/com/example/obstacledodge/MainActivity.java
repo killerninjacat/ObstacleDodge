@@ -1,27 +1,43 @@
 package com.example.obstacledodge;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.*;
 
 public class MainActivity extends AppCompatActivity {
-    Button startbutton,r,r1,r2,r3,r4,r5,r6;
-    TextView hiscore;
+    private APIservice apiservice;
+    Button startbutton,r,r1,r2,r3,r4,r5,r6,trophy;
+    TextView hiscore, n1, n2, n3,s1,s2,s3;
+    ListView scoreslist;
     Vibrator vi;
+    List<Scoresreceive> scores;
+    boolean apir=false;
+    List<String> names;
+    List<String> displaylist;
+    List<String> receivedscores;
     int ru;
     MediaPlayer homesound;
     public void charselect() {
@@ -117,13 +133,48 @@ public class MainActivity extends AppCompatActivity {
         });
         dialog1.show();
     }
+    public void scoresdialog() {
+        final Dialog dialog = new Dialog(MainActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+        dialog.setContentView(R.layout.displayscores);
+        dialog.getWindow().setLayout(1200, ViewGroup.LayoutParams.WRAP_CONTENT);
+        displaylist=new ArrayList<>();
+        scoreslist=dialog.findViewById(R.id.scoreslist);
+        for(int j=0;j<names.size();j++)
+        {
+            for(int k=0;k<names.size()-j-1;k++)
+                if(Integer.parseInt(receivedscores.get(k))<Integer.parseInt(receivedscores.get(k+1)))
+                {
+                    String te=receivedscores.get(k);
+                    receivedscores.set(k,receivedscores.get(k+1));
+                    receivedscores.set(k+1,te);
+                    String te1=names.get(k);
+                    names.set(k,names.get(k+1));
+                    names.set(k+1,te1);
+                }
+
+        }
+        for(int q=0;q<names.size();q++)
+        {
+            displaylist.add(" "+(q+1)+".   "+names.get(q)+"                      "+receivedscores.get(q)+" ");
+        }
+        Log.d("lastelement","first: "+displaylist.get(0));
+        ArrayAdapter<String> arr = new ArrayAdapter<String>(this, R.layout.eachscore,R.id.name, displaylist);
+        scoreslist.setAdapter(arr);
+        dialog.show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        apiservice = ApiClient.getClient().create(APIservice.class);
         startbutton = (Button) findViewById(R.id.startbtn);
+        trophy = (Button) findViewById(R.id.trophy);
         hiscore = (TextView) findViewById(R.id.hiscore);
+        names=new ArrayList<>();
+        receivedscores=new ArrayList<>();
         homesound=MediaPlayer.create(this,R.raw.bghome);
         homesound.setLooping(true);
         homesound.start();
@@ -131,12 +182,64 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sp = getApplicationContext().getSharedPreferences("com.example.obstacledodge", 0);
         int bestscore = sp.getInt("scoreget", 0);
         if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
-            hiscore.setText("HIGHSCORE: " + bestscore);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            this.getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+            hiscore.setText("  HIGHSCORE: " + bestscore+"  ");
+            Call<Data> charcall=apiservice.getScores();
+            charcall.enqueue(new Callback<Data>() {
+                @Override
+                public void onResponse(Call<Data> call, Response<Data> response) {
+                    if(response.isSuccessful())
+                    {
+                        apir=true;
+                        Data data=response.body();
+                        scores=data.getScores();
+                        for(int i=0;i<scores.size();i++)
+                        {
+                            Log.d("name","name: "+scores.get(i).getName());
+                            String stemp=scores.get(i).getName();
+                            names.add(i,stemp);
+                            receivedscores.add(i,Integer.toString(scores.get(i).getScore()));
+                        }
+                        Log.d("myscoreadded","reached");
+                        names.add(names.size(),"You");
+                        receivedscores.add(receivedscores.size(),Integer.toString(bestscore));
+                    }
+                    else {
+                        Toast.makeText(MainActivity.this, "failed to get scores", Toast.LENGTH_SHORT).show();
+                        Log.d("MainActivity", "Error: " + response.code());
+                        Log.d("MainActivity", "Message: " + response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Data> call, Throwable t) {
+                    Toast.makeText(MainActivity.this, "Connect to the internet for an enhanced experience", Toast.LENGTH_SHORT).show();
+                    Log.d("msg","msg "+t.getMessage());
+
+                }
+            });
             startbutton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     vi.vibrate(100);
                     charselect();
+                }
+            });
+            trophy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(apir)
+                    scoresdialog();
+                    else
+                        Toast.makeText(MainActivity.this, "CONNECT TO THE INTERNET AND RESTART APP TO SEE SCORES", Toast.LENGTH_SHORT).show();
                 }
             });
 

@@ -274,7 +274,7 @@ public class CanvasMain extends View {
                 }
                 obscomp.add(ob1);
             } else if (!obscomp.contains(ob1)&&!gover && ob1.right + ob_speed < cx - 2*rad) {
-                score += 10;
+                score += 1;
                 obscomp.add(ob1);
             }
             if(cirtorectchaser().right-ob1.left>-480&&cirtorectchaser().right-ob1.left<-460)/*||cirtorectchaser().right-ob1.left<=-385)*/
