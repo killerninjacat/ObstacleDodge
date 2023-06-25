@@ -1,35 +1,44 @@
 package com.example.obstacledodge;
 
 public class Characterreceive {
-    String imgurl,desc,chatrname;
+    String name,description,type, imageUrl;
 
-    public Characterreceive(String imgurl, String desc, String chatrname) {
-        this.imgurl = imgurl;
-        this.desc = desc;
-        this.chatrname = chatrname;
+    public Characterreceive(String name, String description, String type, String imageUrl) {
+        this.name = name;
+        this.description = description;
+        this.type = type;
+        this.imageUrl = imageUrl;
     }
 
-    public String getImgurl() {
-        return imgurl;
+    public String getName() {
+        return name;
     }
 
-    public void setImgurl(String imgurl) {
-        this.imgurl = imgurl;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getChatrname() {
-        return chatrname;
+    public String getType() {
+        return type;
     }
 
-    public void setChatrname(String chatrname) {
-        this.chatrname = chatrname;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

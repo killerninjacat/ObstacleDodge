@@ -9,21 +9,33 @@ public class Data {
     String tip;
     @SerializedName("scores")
     List<Scoresreceive> scores;
+    @SerializedName("characters")
+    List<Characterreceive> characters;
     @SerializedName("character")
-    List<Characterreceive> character;
-    public Data(String tip)
-    {
-        this.tip=tip;
-        this.scores=scores;
-        this.character=character;
-    }
+    Characterreceive character;
 
-    public List<Characterreceive> getCharacter() {
+    public Characterreceive getCharacter() {
         return character;
     }
 
-    public void setCharacter(List<Characterreceive> charcater) {
-        this.character = charcater;
+    public void setCharacter(Characterreceive character) {
+        this.character = character;
+    }
+
+    public Data(String tip, List<Scoresreceive> scores, List<Characterreceive> characters,Characterreceive character)
+    {
+        this.tip=tip;
+        this.scores=scores;
+        this.characters=characters;
+        this.character=character;
+    }
+
+    public List<Characterreceive> getCharacters() {
+        return characters;
+    }
+
+    public void setCharacters(List<Characterreceive> characters) {
+        this.characters = characters;
     }
 
     public List<Scoresreceive> getScores() {

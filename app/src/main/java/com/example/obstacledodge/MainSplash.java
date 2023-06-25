@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -47,7 +48,8 @@ public class MainSplash extends AppCompatActivity {
             public void onFailure(Call<Data> call, Throwable t) {
                 Log.d("tip", "failed");
                 Log.d("msg","msg "+t.getMessage());
-                tipbox.setText("failure");
+                tipbox.setText("hello");
+                Toast.makeText(MainSplash.this, "Connect to the internet for an enhanced experience", Toast.LENGTH_SHORT).show();
             }
         });
         new Handler().postDelayed(new Runnable() {

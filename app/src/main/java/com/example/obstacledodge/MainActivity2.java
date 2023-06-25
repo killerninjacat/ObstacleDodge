@@ -26,6 +26,11 @@ public class MainActivity2 extends AppCompatActivity {
     boolean gover = false;
     Button homebutton, playagain,homeongover;
     MediaPlayer runsound;
+    String img;
+    public String getimgurl()
+    {
+        return img;
+    }
 
     public void gameoverdialog() {
         final Dialog dialog = new Dialog(MainActivity2.this);
@@ -82,8 +87,8 @@ public class MainActivity2 extends AppCompatActivity {
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         LinearLayout container = findViewById(R.id.container);
         CanvasMain canv = new CanvasMain(this);
-        container.addView(canv);
         plyagn = getIntent().getIntExtra("stch", 0);
+        img=getIntent().getStringExtra("imgurl");
             SharedPreferences sp = getApplicationContext().getSharedPreferences("com.example.obstacledodge", 0);
             SharedPreferences.Editor editor = sp.edit();
             final MediaPlayer goversound=MediaPlayer.create(this, R.raw.gameover);
@@ -92,14 +97,17 @@ public class MainActivity2 extends AppCompatActivity {
             ru1=sp.getInt("selected",1);
             canv.setrun2(ru1);
             plyagn = 0;
+            container.addView(canv);
         }
         else
         {
             Random r7=new Random();
-            ru1=getIntent().getIntExtra("runn",r7.nextInt(7));
+            ru1=getIntent().getIntExtra("runn",r7.nextInt(3));
             editor.putInt("selected", ru1);
             editor.commit();
             canv.setrun2(ru1);
+            Log.d("setrun2", "setrun2: ");
+            container.addView(canv);
         }
             Log.d("ru1", "ru1: " + ru1);
             homeongover=(Button) findViewById(R.id.homeongover);

@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.hardware.display.DisplayManager;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -20,7 +21,14 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +40,9 @@ public class CanvasMain extends View {
     private List<RectF> obs,obscomp;
     private List<Bitmap> eggs;
     private List<Integer> veldir;
-    private Bitmap runner,chaser, runnerhit,runner1,runner2,runner3,runner4,runner5,runner6,runner7,egg;
+    private Bitmap runner,chaser, runnerhit,runner1,runner2;
     boolean jump,jump1,gover=false,strtgme=false,pu=false;
-    private int g=0;
+    private int g=0,rp;
     float refrate,obvertical;
     int go1=0,score=0,obstacle1=0,obcount=0,getrun,obgap,putime=200,puelapsed,dircheck=-1;
     private long t1 = 0;
@@ -75,14 +83,7 @@ public class CanvasMain extends View {
             runner=runner1;
         else if(r9==2)
             runner=runner2;
-        else if(r9==3)
-            runner=runner3;
-        else if(r9==4)
-            runner=runner4;
-        else if(r9==5)
-            runner=runner5;
-        else if(r9==6)
-            runner=runner6;
+        rp=r9;
     }
     public void Resetvals()
     {
@@ -118,23 +119,45 @@ public class CanvasMain extends View {
         Resources res = context.getResources();
         scorefont = ResourcesCompat.getFont(context, R.font.bangers);
         textpaint=new Paint();
-        textpaint.setColor(Color.BLACK);
+        textpaint.setColor(Color.WHITE);
         textpaint.setTextSize(100);
         textpaint.setTypeface(scorefont);
-        runner = BitmapFactory.decodeResource(getResources(), R.drawable.runner);
-        runner1 = BitmapFactory.decodeResource(getResources(), R.drawable.runner1);
-        runner2 = BitmapFactory.decodeResource(getResources(), R.drawable.runner2);
-        runner3 = BitmapFactory.decodeResource(getResources(), R.drawable.runner3);
-        runner4 = BitmapFactory.decodeResource(getResources(), R.drawable.runner4);
-        runner5 = BitmapFactory.decodeResource(getResources(), R.drawable.runner5);
-        runner6 = BitmapFactory.decodeResource(getResources(), R.drawable.runner6);
-        runner7 = BitmapFactory.decodeResource(getResources(), R.drawable.runner7);
+        Glide.with(this)
+                .asBitmap()
+                .load("https://ik.imagekit.io/obstacleDodge/images/player/player782503.png")
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                        runner = resource;
+                    }
+                });
+        Glide.with(this)
+                .asBitmap()
+                .load("https://ik.imagekit.io/obstacleDodge/images/player/player249581.png")
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                        runner2 = resource;
+                        if(rp==2)
+                            runner=runner2;
+                    }
+                });
+        Glide.with(this)
+                .asBitmap()
+                .load("https://ik.imagekit.io/obstacleDodge/images/player/player798755.png")
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                        runner1 = resource;
+                        if(rp==1)
+                            runner=runner1;
+                    }
+                });
         runnerhit = BitmapFactory.decodeResource(getResources(), R.drawable.hitrunner);
-        egg = BitmapFactory.decodeResource(getResources(), R.drawable.bonus);
         chaser=BitmapFactory.decodeResource(getResources(),R.drawable.chaser);
         cir_p.setColor(Color.CYAN);
-        ob_p.setColor(Color.parseColor("#5C06FA"));
-        ob_p2.setColor(Color.parseColor("#5B1600"));
+        ob_p.setColor(Color.parseColor("#eeeeee"));
+        ob_p2.setColor(Color.parseColor("#fce409"));
         ob_p1.setColor(Color.RED);
         obs = new ArrayList<>();
         veldir=new ArrayList<>();
@@ -240,11 +263,11 @@ public class CanvasMain extends View {
                 }*/
             canvas.drawText("SCORE: "+score,getWidth()-500,180,textpaint);
         canvas.drawBitmap(runner,cx, cy, null);
-        canvas.drawBitmap(chaser,cx1,cy1,null);
+        canvas.drawBitmap(chaser,cx1,cy1-30,null);
         for (int i1=0;i1<obs.size();i1++) {
             RectF ob1=obs.get(i1);
             ob1.offset(-ob_speed, 0);
-            if(obcount>=20)
+            if(obcount>=15)
                 if(ob1.height()!=400)
                 ob1.offset(0,-obvertical*veldir.get(i1));
             if(ob1.top<=0||ob1.bottom>=getHeight()-150) {
@@ -270,7 +293,6 @@ public class CanvasMain extends View {
                     canvas.drawRect(ob1,ob_p1);
                     vibr.vibrate(100);
                     ob_p=ob_p1;
-                    runner= runnerhit;
                 }
                 obscomp.add(ob1);
             } else if (!obscomp.contains(ob1)&&!gover && ob1.right + ob_speed < cx - 2*rad) {
@@ -315,11 +337,11 @@ public class CanvasMain extends View {
     }
     private RectF cirtorect()
     {
-        return new RectF(cx-2*rad+120,cy-2*rad+130,cx+2*rad+50,cy+2*rad-30);
+        return new RectF(cx-2*rad+150,cy-2*rad+130,cx+2*rad+50,cy+2*rad+40);
     }
     private RectF cirtorectchaser()
     {
-        return new RectF(cx-2*rad+120-500,cy1-2*rad,cx+2*rad+50-500,cy1+2*rad-30);
+        return new RectF(cx-2*rad+120-500,cy1-2*rad,cx+2*rad+50-500,cy1+2*rad+30);
     }
     private void newobs(int wi,int he)
     {

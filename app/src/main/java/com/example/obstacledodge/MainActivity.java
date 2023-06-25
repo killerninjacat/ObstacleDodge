@@ -1,7 +1,5 @@
 package com.example.obstacledodge;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
@@ -11,6 +9,7 @@ import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +17,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,43 +32,74 @@ import retrofit2.*;
 
 public class MainActivity extends AppCompatActivity {
     private APIservice apiservice;
-    Button startbutton,r,r1,r2,r3,r4,r5,r6,trophy;
-    TextView hiscore, n1, n2, n3,s1,s2,s3;
+    Button startbutton,info;
+    ImageView r,r1,r2,c1,c2,c3;
+    ImageView trophy;
+    TextView hiscore, n1, n2, n3,d1,d2,d3;
     ListView scoreslist;
+    List<String> imgurls,descriptions,cnames;
     Vibrator vi;
     List<Scoresreceive> scores;
-    boolean apir=false;
+    List<Characterreceive> chars;
+    Characterreceive charr;
+    boolean apir=false,chk=false;
     List<String> names;
+    List<String> chnames;
     List<String> displaylist;
     List<String> receivedscores;
     int ru;
     MediaPlayer homesound;
     public void charselect() {
-        final Dialog dialog1 = new Dialog(MainActivity.this);
-        dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog1.setCancelable(true);
-        dialog1.getWindow().setLayout(500, 500);
-        dialog1.setContentView(R.layout.chooserunner);
-        r = dialog1.findViewById(R.id.r);
-        r1 = dialog1.findViewById(R.id.r1);
-        r2 = dialog1.findViewById(R.id.r2);
-        r3 = dialog1.findViewById(R.id.r3);
-        r4 = dialog1.findViewById(R.id.r4);
-        r5 = dialog1.findViewById(R.id.r5);
-        r6 = dialog1.findViewById(R.id.r6);
+        final Dialog dialog = new Dialog(MainActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+        dialog.setContentView(R.layout.characterdetails);
+        dialog.getWindow().setLayout(2000, ViewGroup.LayoutParams.WRAP_CONTENT);
+        n1=dialog.findViewById(R.id.n1);
+        n2=dialog.findViewById(R.id.n2);
+        n3=dialog.findViewById(R.id.n3);
+        d1=dialog.findViewById(R.id.d1);
+        d2=dialog.findViewById(R.id.d2);
+        d3=dialog.findViewById(R.id.d3);
+        c1=dialog.findViewById(R.id.c1);
+        c2=dialog.findViewById(R.id.c2);
+        c3=dialog.findViewById(R.id.c3);
+        n1.setText(cnames.get(0));
+        n2.setText(cnames.get(1));
+        n3.setText(cnames.get(2));
+        d1.setText(descriptions.get(0));
+        d2.setText(descriptions.get(1));
+        d3.setText(descriptions.get(2));
+        if(imgurls!=null) {
+            Glide.with(MainActivity.this)
+                    .load(imgurls.get(0))
+                    .apply(new RequestOptions())
+                    .into(c1);
+            Glide.with(MainActivity.this)
+                    .load(imgurls.get(1))
+                    .apply(new RequestOptions())
+                    .into(c2);
+            Glide.with(MainActivity.this)
+                    .load(imgurls.get(2))
+                    .apply(new RequestOptions())
+                    .into(c3);
+        }
+        else
+            Toast.makeText(MainActivity.this, "failed to get characters", Toast.LENGTH_SHORT).show();
         final MediaPlayer strt=MediaPlayer.create(this, R.raw.startgame);
-        r.setOnClickListener(new View.OnClickListener() {
+        c1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 strt.start();
                 vi.vibrate(100);
                 ru=0;
                 Intent i = new Intent(MainActivity.this, MainActivity2.class);
+                i.putExtra("imgurl",imgurls.get(0));
                 i.putExtra("runn",ru);
                 startActivity(i);
             }
         });
-        r1.setOnClickListener(new View.OnClickListener() {
+        c2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 strt.start();
@@ -76,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-        r2.setOnClickListener(new View.OnClickListener() {
+        c3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 strt.start();
@@ -87,51 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-        r3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                strt.start();
-                vi.vibrate(100);
-                ru=3;
-                Intent i = new Intent(MainActivity.this, MainActivity2.class);
-                i.putExtra("runn",ru);
-                startActivity(i);
-            }
-        });
-        r4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                strt.start();
-                vi.vibrate(100);
-                ru=4;
-                Intent i = new Intent(MainActivity.this, MainActivity2.class);
-                i.putExtra("runn",ru);
-                startActivity(i);
-            }
-        });
-        r5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                strt.start();
-                vi.vibrate(100);
-                ru=5;
-                Intent i = new Intent(MainActivity.this, MainActivity2.class);
-                i.putExtra("runn",ru);
-                startActivity(i);
-            }
-        });
-        r6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                strt.start();
-                vi.vibrate(100);
-                ru=6;
-                Intent i = new Intent(MainActivity.this, MainActivity2.class);
-                i.putExtra("runn",ru);
-                startActivity(i);
-            }
-        });
-        dialog1.show();
+        dialog.show();
     }
     public void scoresdialog() {
         final Dialog dialog = new Dialog(MainActivity.this);
@@ -171,17 +161,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         apiservice = ApiClient.getClient().create(APIservice.class);
         startbutton = (Button) findViewById(R.id.startbtn);
-        trophy = (Button) findViewById(R.id.trophy);
+        trophy = (ImageView) findViewById(R.id.trophy);
         hiscore = (TextView) findViewById(R.id.hiscore);
         names=new ArrayList<>();
+        imgurls=new ArrayList<>();
+        cnames=new ArrayList<>();
+        descriptions=new ArrayList<>();
+        chnames=new ArrayList<>();
         receivedscores=new ArrayList<>();
-        homesound=MediaPlayer.create(this,R.raw.bghome);
-        homesound.setLooping(true);
-        homesound.start();
         vi=(Vibrator)this.getSystemService(this.VIBRATOR_SERVICE);
         SharedPreferences sp = getApplicationContext().getSharedPreferences("com.example.obstacledodge", 0);
         int bestscore = sp.getInt("scoreget", 0);
         if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
+            homesound=MediaPlayer.create(this,R.raw.bghome);
+            homesound.setLooping(true);
+            homesound.start();
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
             this.getWindow().getDecorView().setSystemUiVisibility(
@@ -203,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
                         scores=data.getScores();
                         for(int i=0;i<scores.size();i++)
                         {
-                            Log.d("name","name: "+scores.get(i).getName());
                             String stemp=scores.get(i).getName();
                             names.add(i,stemp);
                             receivedscores.add(i,Integer.toString(scores.get(i).getScore()));
@@ -216,12 +209,65 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "failed to get scores", Toast.LENGTH_SHORT).show();
                         Log.d("MainActivity", "Error: " + response.code());
                         Log.d("MainActivity", "Message: " + response.message());
+                        Log.d("error 422","error msg: "+response.errorBody());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Data> call, Throwable t) {
-                    Toast.makeText(MainActivity.this, "Connect to the internet for an enhanced experience", Toast.LENGTH_SHORT).show();
+                    Log.d("msg","msg "+t.getMessage());
+
+                }
+            });
+            CharacterRequest request = new CharacterRequest("player");
+            Call<Data> charcall1=apiservice.getallcharacters(request);
+            charcall1.enqueue(new Callback<Data>() {
+                @Override
+                public void onResponse(Call<Data> call, Response<Data> response) {
+                    if(response.isSuccessful())
+                    {
+                        Data data=response.body();
+                        chars=data.getCharacters();
+                        Log.d("characters","responsebody: ");
+                        for(int i=0;i<chars.size();i++) {
+                            imgurls.add(chars.get(i).getImageUrl());
+                            cnames.add(chars.get(i).getName());
+                            descriptions.add(chars.get(i).getDescription());
+                        }
+                        chk=true;
+                        Log.d("success","reached1: "+imgurls.size());
+                    }
+                    else {
+                        Log.d("error", "Error: " + response.code());
+                        Log.d("message", "Message: " + response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Data> call, Throwable t) {
+                    Log.d("msg","msg "+t.getMessage());
+
+                }
+            });
+            Call<Data> charcall2=apiservice.getrandomcharacter(request);
+            charcall2.enqueue(new Callback<Data>() {
+                @Override
+                public void onResponse(Call<Data> call, Response<Data> response) {
+                    if(response.isSuccessful())
+                    {
+                        Data data=response.body();
+                        charr=data.getCharacter();
+                        Log.d("charr","charr: "+charr.getImageUrl());
+                        Log.d("success","reached2");
+                    }
+                    else {
+                        Log.d("error", "Error: " + response.code());
+                        Log.d("message", "Message: " + response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Data> call, Throwable t) {
                     Log.d("msg","msg "+t.getMessage());
 
                 }
@@ -230,7 +276,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     vi.vibrate(100);
+                    if(chk)
                     charselect();
+                    else
+                        Toast.makeText(MainActivity.this, "CONNECT TO THE INTERNET AND RESTART THE APP", Toast.LENGTH_SHORT).show();
                 }
             });
             trophy.setOnClickListener(new View.OnClickListener() {

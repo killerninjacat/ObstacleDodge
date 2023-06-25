@@ -6,9 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/homeimg"
-    android:scaleType="centerCrop"
     android:gravity="center"
     android:orientation="vertical"
+    android:scaleType="centerCrop"
     tools:context=".MainActivity">
 
     <Button
@@ -34,8 +34,8 @@
         android:id="@+id/hiscore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/highscore"
         android:fontFamily="@font/bangers"
         android:text="HIGHSCORE: XXXX"
@@ -44,16 +44,16 @@
         android:textColor="#6B007E"
         android:textSize="36sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/trophy" />
 
-    <Button
+    <ImageView
         android:id="@+id/trophy"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginStart="80dp"
         android:layout_marginBottom="300dp"
         android:background="@drawable/trophy"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

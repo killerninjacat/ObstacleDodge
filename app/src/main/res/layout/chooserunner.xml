@@ -24,75 +24,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <ImageView
         android:id="@+id/r"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="170dp"
-        android:background="@drawable/runner"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginBottom="92dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/r3" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/r1"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="170dp"
-        android:background="@drawable/runner1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/r2" />
-
-    <Button
+    <ImageView
         android:id="@+id/r2"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="170dp"
-        android:background="@drawable/runner2"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="92dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/r1" />
+
+    <ImageView
+        android:id="@+id/r1"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="92dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/r" />
-
-    <Button
-        android:id="@+id/r3"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginBottom="170dp"
-        android:background="@drawable/runner3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/r4"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="65dp"
-        android:layout_marginBottom="90dp"
-        android:background="@drawable/runner4"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/r5"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="90dp"
-        android:background="@drawable/runner5"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/r4" />
-
-    <Button
-        android:id="@+id/r6"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="90dp"
-        android:background="@drawable/runner6"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/r5" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
