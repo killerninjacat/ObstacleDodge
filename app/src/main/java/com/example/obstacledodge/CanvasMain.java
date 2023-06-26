@@ -44,9 +44,9 @@ public class CanvasMain extends View {
     boolean jump,jump1,gover=false,strtgme=false,pu=false;
     private int g=0,rp;
     float refrate,obvertical;
-    int go1=0,score=0,obstacle1=0,obcount=0,getrun,obgap,putime=200,puelapsed,dircheck=-1;
+    int go1=0,score=0,obstacle1=0,obcount=0,obcount2=0,getrun,obgap,putime=200,puelapsed,dircheck=-1;
     private long t1 = 0;
-    float vely,vely1=-67,vely3,grav=3;
+    float vely,vely1=-67,vely3,grav=2.75f;
     final MediaPlayer h01=MediaPlayer.create(getContext(), R.raw.hitonce);
     Vibrator vibr;
     Typeface scorefont;
@@ -174,7 +174,7 @@ public class CanvasMain extends View {
 
     @Override
     public void onDraw(Canvas canvas) {
-        if (strtgme)
+        if (strtgme&&runner!=null)
         {
             super.onDraw(canvas);
         int base = getHeight() - 100;
@@ -209,11 +209,11 @@ public class CanvasMain extends View {
             {
                 vely1=-55;
                 grav=1.7f;
-                obvertical=3.3f;
-                if(obcount>=30)
-                    obvertical=7.33f;
-                else if(obcount>=40)
-                    obvertical=11.33f;
+                obvertical=3.7f;
+                if(obcount>=25)
+                    obvertical=8f;
+                else if(obcount>=35)
+                    obvertical=13f;
                 if(obcount<7) {
                     ob_speed = 14;
                     obgap = 1250 + 10*random.nextInt(5);
@@ -232,26 +232,30 @@ public class CanvasMain extends View {
                 }
             }
             else {
-                obvertical=5;
-                if(obcount>=30)
+                obvertical=8;
+                if(obcount>=25)
                     obvertical=11;
-                else if(obcount>=40)
-                    obvertical=17;
+                else if(obcount>=35)
+                    obvertical=16;
                 if(obcount<7) {
                     ob_speed = 20;
                     obgap = 1250+ 10*random.nextInt(5);
                 }
                 else if(obcount>=7&&obcount<=15) {
-                    ob_speed = 22;
+                    ob_speed = 23;
                     obgap = 1450+ 10*random.nextInt(5);
                 }
                 else if(obcount>=16&&obcount<=25) {
-                    ob_speed = 24;
+                    ob_speed = 26;
                     obgap = 1650+ 10*random.nextInt(5);
                 }
                 else {
-                    ob_speed = 26;
+                    ob_speed = 29;
                     obgap = 1750+ 10*random.nextInt(5);
+                }
+                if(obcount-obcount2<=5&&g>=1) {
+                    ob_speed = 16;
+                    grav=2.5f;
                 }
             }
             /*if(obcount>=2)
@@ -267,9 +271,10 @@ public class CanvasMain extends View {
         for (int i1=0;i1<obs.size();i1++) {
             RectF ob1=obs.get(i1);
             ob1.offset(-ob_speed, 0);
-            if(obcount>=15)
-                if(ob1.height()!=400)
-                ob1.offset(0,-obvertical*veldir.get(i1));
+            if(obcount>=15) {
+                if (ob1.height() != 400)
+                    ob1.offset(0, -obvertical * veldir.get(i1));
+            }
             if(ob1.top<=0||ob1.bottom>=getHeight()-150) {
                     veldir.set(i1,veldir.get(i1) * -1);
             }
@@ -287,7 +292,7 @@ public class CanvasMain extends View {
 
                 } else {
                     h01.start();
-                    ob_speed-=3;
+                    obcount2=obcount;
                     g++;
                     cx1=cx-300;
                     canvas.drawRect(ob1,ob_p1);
@@ -348,7 +353,7 @@ public class CanvasMain extends View {
         Random random=new Random();
         int obh=random.nextBoolean()?ob1_h:ob2_h;
         int oby=he-obh-150;
-        if(obcount>=20&&obh!=400) {
+        if(obcount>=15&&obh!=400) {
             oby = oby - 180*random.nextInt(5);
             Log.d("initial", "oby: "+oby);
         }
