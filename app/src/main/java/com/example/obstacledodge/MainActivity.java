@@ -32,23 +32,87 @@ import retrofit2.*;
 
 public class MainActivity extends AppCompatActivity {
     private APIservice apiservice;
-    Button startbutton,info;
+    Button startbutton,info,settings;
     ImageView r,r1,r2,c1,c2,c3;
     ImageView trophy;
     TextView hiscore, n1, n2, n3,d1,d2,d3;
     ListView scoreslist;
-    List<String> imgurls,descriptions,cnames;
+    List<String> imgurls,descriptions,cnames,imgurls1,descriptions1,cnames1;
     Vibrator vi;
     List<Scoresreceive> scores;
-    List<Characterreceive> chars;
+    List<Characterreceive> chars,chars1;
     Characterreceive charr;
     boolean apir=false,chk=false;
     List<String> names;
     List<String> chnames;
     List<String> displaylist;
     List<String> receivedscores;
-    int ru;
+    int ru,ru1;
     MediaPlayer homesound;
+    public void chaserselect()
+    {
+        final Dialog dialog = new Dialog(MainActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+        dialog.setContentView(R.layout.chaserdetails);
+        dialog.getWindow().setLayout(2000, ViewGroup.LayoutParams.WRAP_CONTENT);
+        n1=dialog.findViewById(R.id.n1);
+        n2=dialog.findViewById(R.id.n2);
+        n3=dialog.findViewById(R.id.n3);
+        d1=dialog.findViewById(R.id.d1);
+        d2=dialog.findViewById(R.id.d2);
+        d3=dialog.findViewById(R.id.d3);
+        c1=dialog.findViewById(R.id.c1);
+        c2=dialog.findViewById(R.id.c2);
+        c3=dialog.findViewById(R.id.c3);
+        n1.setText(cnames1.get(0));
+        n2.setText(cnames1.get(1));
+        n3.setText(cnames1.get(2));
+        d1.setText(descriptions1.get(0));
+        d2.setText(descriptions1.get(1));
+        d3.setText(descriptions1.get(2));
+        if(imgurls1!=null) {
+            Glide.with(MainActivity.this)
+                    .load(imgurls1.get(0))
+                    .apply(new RequestOptions())
+                    .into(c1);
+            Glide.with(MainActivity.this)
+                    .load(imgurls1.get(1))
+                    .apply(new RequestOptions())
+                    .into(c2);
+            Glide.with(MainActivity.this)
+                    .load(imgurls1.get(2))
+                    .apply(new RequestOptions())
+                    .into(c3);
+        }
+        else
+            Toast.makeText(MainActivity.this, "failed to get characters", Toast.LENGTH_SHORT).show();
+        c1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vi.vibrate(100);
+                ru1=0;
+                charselect();
+            }
+        });
+        c2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vi.vibrate(100);
+                ru1=1;
+                charselect();
+            }
+        });
+        c3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vi.vibrate(100);
+                ru1=2;
+                charselect();
+            }
+        });
+        dialog.show();
+    }
     public void charselect() {
         final Dialog dialog = new Dialog(MainActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -96,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent i = new Intent(MainActivity.this, MainActivity2.class);
                 i.putExtra("imgurl",imgurls.get(0));
                 i.putExtra("runn",ru);
+                i.putExtra("runn1",ru1);
                 startActivity(i);
             }
         });
@@ -106,7 +171,9 @@ public class MainActivity extends AppCompatActivity {
                 vi.vibrate(100);
                 ru=1;
                 Intent i = new Intent(MainActivity.this, MainActivity2.class);
+                i.putExtra("imgurl",imgurls.get(0));
                 i.putExtra("runn",ru);
+                i.putExtra("runn1",ru1);
                 startActivity(i);
             }
         });
@@ -117,7 +184,9 @@ public class MainActivity extends AppCompatActivity {
                 vi.vibrate(100);
                 ru=2;
                 Intent i = new Intent(MainActivity.this, MainActivity2.class);
+                i.putExtra("imgurl",imgurls.get(0));
                 i.putExtra("runn",ru);
+                i.putExtra("runn1",ru1);
                 startActivity(i);
             }
         });
@@ -167,6 +236,9 @@ public class MainActivity extends AppCompatActivity {
         imgurls=new ArrayList<>();
         cnames=new ArrayList<>();
         descriptions=new ArrayList<>();
+        imgurls1=new ArrayList<>();
+        cnames1=new ArrayList<>();
+        descriptions1=new ArrayList<>();
         chnames=new ArrayList<>();
         receivedscores=new ArrayList<>();
         vi=(Vibrator)this.getSystemService(this.VIBRATOR_SERVICE);
@@ -220,6 +292,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             CharacterRequest request = new CharacterRequest("player");
+            CharacterRequest request1 = new CharacterRequest("chaser");
             Call<Data> charcall1=apiservice.getallcharacters(request);
             charcall1.enqueue(new Callback<Data>() {
                 @Override
@@ -249,16 +322,19 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
-            Call<Data> charcall2=apiservice.getrandomcharacter(request);
-            charcall2.enqueue(new Callback<Data>() {
+            Call<Data> charcall2=apiservice.getallcharacters(request1);
+           charcall2.enqueue(new Callback<Data>() {
                 @Override
                 public void onResponse(Call<Data> call, Response<Data> response) {
                     if(response.isSuccessful())
                     {
-                        Data data=response.body();
-                        charr=data.getCharacter();
-                        Log.d("charr","charr: "+charr.getImageUrl());
-                        Log.d("success","reached2");
+                        Data data1=response.body();
+                        chars1=data1.getCharacters();
+                        for(int i=0;i<chars1.size();i++) {
+                            imgurls1.add(chars1.get(i).getImageUrl());
+                            cnames1.add(chars1.get(i).getName());
+                            descriptions1.add(chars1.get(i).getDescription());
+                        }
                     }
                     else {
                         Log.d("error", "Error: " + response.code());
@@ -277,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     vi.vibrate(100);
                     if(chk)
-                    charselect();
+                    chaserselect();
                     else
                         Toast.makeText(MainActivity.this, "CONNECT TO THE INTERNET AND RESTART THE APP", Toast.LENGTH_SHORT).show();
                 }

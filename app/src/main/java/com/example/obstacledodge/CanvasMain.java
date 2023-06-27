@@ -40,9 +40,10 @@ public class CanvasMain extends View {
     private List<RectF> obs,obscomp;
     private List<Bitmap> eggs;
     private List<Integer> veldir;
-    private Bitmap runner,chaser, runnerhit,runner1,runner2;
+    private Bitmap runner,chaser, runnerhit,runner1,runner2,chaser1,chaser2;
     boolean jump,jump1,gover=false,strtgme=false,pu=false;
-    private int g=0,rp;
+    private int g=0,rp,rp1;
+    String runnerurl,chaserurl;
     float refrate,obvertical;
     int go1=0,score=0,obstacle1=0,obcount=0,obcount2=0,getrun,obgap,putime=200,puelapsed,dircheck=-1;
     private long t1 = 0;
@@ -77,13 +78,18 @@ public class CanvasMain extends View {
         }
         return 60.0f;
     }
-    public void setrun2(int r9)
+    public void setrun2(int r9,int r10)
     {
         if(r9==1)
             runner=runner1;
         else if(r9==2)
             runner=runner2;
         rp=r9;
+        if(r10==1)
+            chaser=chaser1;
+        else if(r10==2)
+            chaser=chaser2;
+        rp1=r10;
     }
     public void Resetvals()
     {
@@ -112,6 +118,7 @@ public class CanvasMain extends View {
 
     public CanvasMain(Context context) {
         super(context);
+        Log.d("canvasmain","reached");
         cir_p = new Paint();
         ob_p = new Paint();
         ob_p1 = new Paint();
@@ -122,6 +129,7 @@ public class CanvasMain extends View {
         textpaint.setColor(Color.WHITE);
         textpaint.setTextSize(100);
         textpaint.setTypeface(scorefont);
+        Log.d("url1", "runnerurlincanvas " + runnerurl);
         Glide.with(this)
                 .asBitmap()
                 .load("https://ik.imagekit.io/obstacleDodge/images/player/player782503.png")
@@ -153,8 +161,38 @@ public class CanvasMain extends View {
                             runner=runner1;
                     }
                 });
+        Glide.with(this)
+                .asBitmap()
+                .load("https://ik.imagekit.io/obstacleDodge/images/chaser/chaser230408.png")
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                        chaser = resource;
+                    }
+                });
+        Glide.with(this)
+                .asBitmap()
+                .load("https://ik.imagekit.io/obstacleDodge/images/chaser/chaser509896.png")
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                        chaser2 = resource;
+                        if(rp1==2)
+                            chaser=chaser2;
+                    }
+                });
+        Glide.with(this)
+                .asBitmap()
+                .load("https://ik.imagekit.io/obstacleDodge/images/chaser/chaser598404.png")
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                        chaser1 = resource;
+                        if(rp1==1)
+                            chaser=chaser1;
+                    }
+                });
         runnerhit = BitmapFactory.decodeResource(getResources(), R.drawable.hitrunner);
-        chaser=BitmapFactory.decodeResource(getResources(),R.drawable.chaser);
         cir_p.setColor(Color.CYAN);
         ob_p.setColor(Color.parseColor("#eeeeee"));
         ob_p2.setColor(Color.parseColor("#fce409"));
@@ -174,7 +212,7 @@ public class CanvasMain extends View {
 
     @Override
     public void onDraw(Canvas canvas) {
-        if (strtgme&&runner!=null)
+        if (strtgme&&runner!=null&&chaser!=null)
         {
             super.onDraw(canvas);
         int base = getHeight() - 100;
@@ -229,6 +267,11 @@ public class CanvasMain extends View {
                 else {
                     ob_speed = 18;
                     obgap = 1750 + 10*random.nextInt(5);
+                }
+                if(obcount-obcount2<=5&&g>=1) {
+                    ob_speed = 10;
+                    grav = 1.35f;
+                    vely1=-50;
                 }
             }
             else {

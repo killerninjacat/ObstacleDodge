@@ -21,12 +21,12 @@ import android.widget.TextView;
 import java.util.Random;
 
 public class MainActivity2 extends AppCompatActivity {
-    int gcheck, score, plyagn = 0,ru1;int soundcheck=0;
-    static int chch=0;
+    int gcheck, score, plyagn = 0,ru1;int soundcheck=0,ru2;
+    static int chch=0,sschar=0;
     boolean gover = false;
     Button homebutton, playagain,homeongover;
     MediaPlayer runsound;
-    String img;
+    String img,url1,url2;
     public String getimgurl()
     {
         return img;
@@ -60,6 +60,7 @@ public class MainActivity2 extends AppCompatActivity {
         homebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sschar=0;
                 chch=1;
                 Intent in = new Intent(MainActivity2.this, MainActivity.class);
                 startActivity(in);
@@ -93,20 +94,34 @@ public class MainActivity2 extends AppCompatActivity {
             SharedPreferences.Editor editor = sp.edit();
             final MediaPlayer goversound=MediaPlayer.create(this, R.raw.gameover);
         if (plyagn == 1) {
+            ru1=sp.getInt("selectedrunner",2);
+            ru2=sp.getInt("selectedchaser",2);
+            canv.setrun2(ru1,ru2);
             canv.Resetvals();
-            ru1=sp.getInt("selected",1);
-            canv.setrun2(ru1);
             plyagn = 0;
             container.addView(canv);
         }
         else
         {
             Random r7=new Random();
-            ru1=getIntent().getIntExtra("runn",r7.nextInt(3));
-            editor.putInt("selected", ru1);
-            editor.commit();
-            canv.setrun2(ru1);
-            Log.d("setrun2", "setrun2: ");
+            Log.d("sschar","sschar: "+sschar);
+            if(sschar==0) {
+                ru1 = getIntent().getIntExtra("runn", r7.nextInt(3));
+                ru2 = getIntent().getIntExtra("runn1", r7.nextInt(3));
+                url1 = getIntent().getStringExtra("imgurl");
+                editor.putInt("selectedrunner", ru1);
+                editor.commit();
+                editor.putInt("selectedchaser", ru2);
+                editor.commit();
+                sschar+=1;
+            }
+            else
+            {
+                ru1=sp.getInt("selectedrunner",2);
+                ru2=sp.getInt("selectedchaser",2);
+            }
+            canv.setrun2(ru1,ru2);
+            Log.d("plyagn is not 1", "else part");
             container.addView(canv);
         }
             Log.d("ru1", "ru1: " + ru1);
