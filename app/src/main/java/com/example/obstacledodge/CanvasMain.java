@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.hardware.display.DisplayManager;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -21,12 +20,9 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 
@@ -39,7 +35,7 @@ public class CanvasMain extends View {
     private Paint cir_p, ob_p,ob_p1,ob_p2,textpaint;
     private List<RectF> obs,obscomp;
     private List<Bitmap> eggs;
-    private List<Integer> veldir;
+    private List<Integer> velocitydirection;
     private Bitmap runner,chaser, runnerhit,runner1,runner2,chaser1,chaser2;
     boolean jump,jump1,gover=false,strtgme=false,pu=false;
     private int g=0,rp,rp1;
@@ -108,7 +104,7 @@ public class CanvasMain extends View {
         obstacle1=0;
         vely=0;
         obs.clear();
-        veldir.clear();
+        velocitydirection.clear();
         obscomp.clear();
         newobs(getWidth(),getHeight());
         sendvals();
@@ -198,7 +194,7 @@ public class CanvasMain extends View {
         ob_p2.setColor(Color.parseColor("#fce409"));
         ob_p1.setColor(Color.RED);
         obs = new ArrayList<>();
-        veldir=new ArrayList<>();
+        velocitydirection =new ArrayList<>();
         obscomp = new ArrayList<>();
     }
     protected void onSizeChanged(int w2,int h2,int w1,int h1)
@@ -316,10 +312,10 @@ public class CanvasMain extends View {
             ob1.offset(-ob_speed, 0);
             if(obcount>=15) {
                 if (ob1.height() != 400)
-                    ob1.offset(0, -obvertical * veldir.get(i1));
+                    ob1.offset(0, -obvertical * velocitydirection.get(i1));
             }
             if(ob1.top<=0||ob1.bottom>=getHeight()-150) {
-                    veldir.set(i1,veldir.get(i1) * -1);
+                    velocitydirection.set(i1, velocitydirection.get(i1) * -1);
             }
             if(ob1.height()==400)
             canvas.drawRect(ob1, ob_p2);
@@ -355,7 +351,7 @@ public class CanvasMain extends View {
             RectF ob3 = obs.get(i);
             if (ob3.right <= 0) {
                 obs.remove(i);
-                veldir.remove(i);
+                velocitydirection.remove(i);
                 obcount++;
             }
         }
@@ -405,7 +401,7 @@ public class CanvasMain extends View {
             obx+=ob2.width()+obgap;
         RectF ob2=new RectF(obx,oby,obx+ob_w,oby+obh);
         obs.add(ob2);
-        veldir.add(1);
+        velocitydirection.add(1);
     }
     /*private void newegg()
     {
